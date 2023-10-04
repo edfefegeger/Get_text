@@ -19,7 +19,9 @@ namespace Project_text
                                .AllowAnyHeader();
                     });
             });
+
             services.AddControllers();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API Name", Version = "v1" });
@@ -29,22 +31,30 @@ namespace Project_text
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseCors("AllowAllOrigins");
-
-            
             app.UseStaticFiles();
             app.UseRouting();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
+                    name: "downloadFile",
+                    pattern: "OCR/DownloadFile",
+                    defaults: new { controller = "OCR", action = "DownloadFile" }
+                );
+
+                endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
                 endpoints.MapControllers();
+
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API Name V1");
                     c.RoutePrefix = "swagger";
                 });
+
             });
         }
     }

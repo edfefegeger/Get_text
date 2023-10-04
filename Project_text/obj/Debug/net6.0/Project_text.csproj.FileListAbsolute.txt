@@ -73,3 +73,10 @@ C:\Users\Super PC\source\repos\Project_text\Project_text\bin\Debug\net6.0\Swashb
 C:\Users\Super PC\source\repos\Project_text\Project_text\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\Super PC\source\repos\Project_text\Project_text\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Users\Super PC\source\repos\Project_text\Project_text\obj\Debug\net6.0\Project_text.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Super PC\source\repos\Project_text\Project_text\bin\Debug\net6.0\Swashbuckle.AspNetCore.Annotations.dll
+C:\Users\Super PC\source\repos\Project_text\Project_text\bin\Debug\net6.0\PdfiumViewer.dll
+C:\Users\Super PC\source\repos\Project_text\Project_text\bin\Debug\net6.0\PdfSharp.Charting.dll
+C:\Users\Super PC\source\repos\Project_text\Project_text\bin\Debug\net6.0\PdfSharp.dll
+C:\Users\Super PC\source\repos\Project_text\Project_text\bin\Debug\net6.0\nl\PdfiumViewer.resources.dll
+C:\Users\Super PC\source\repos\Project_text\Project_text\bin\Debug\net6.0\de\PdfSharp.Charting.resources.dll
+C:\Users\Super PC\source\repos\Project_text\Project_text\bin\Debug\net6.0\de\PdfSharp.resources.dll

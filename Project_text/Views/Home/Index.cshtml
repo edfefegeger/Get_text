@@ -20,6 +20,7 @@
             var formData = new FormData();
             formData.append('file', fileInput.files[0]);
 
+
             try {
                 const response = await fetch('http://localhost:5105/OCR/UploadFile', {
                     method: 'POST',

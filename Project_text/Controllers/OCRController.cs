@@ -1,30 +1,62 @@
-﻿using System;
-using System.IO;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using iText.Kernel.Pdf;
-using iText.Kernel.Pdf.Canvas.Parser;
-using Tesseract;
+using Microsoft.AspNetCore.Mvc.Filters;
 using OfficeOpenXml;
+using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.IO;
+using System.Linq;
+using System.Text;
+using Tesseract;
+using iText.Kernel.Pdf;
+using PdfiumViewer;
 
 namespace Project_text.Controllers
 {
-    public class OCRController : Controller
+    [ApiController]
+    [Route("OCR")]
+    public class OCRController : ControllerBase
     {
-        [HttpPost]
+        [HttpPost("UploadFile")]
+        [SwaggerOperation(Summary = "Upload a file and extract text.")]
+        [SwaggerResponse(200, "Successful operation", typeof(string))]
+        [SwaggerResponse(400, "Invalid input", null)]
         public IActionResult UploadFile(IFormFile file)
         {
             if (file != null && file.Length > 0)
             {
-                string recognizedText = RecognizeText(file);
-                return Json(new { Text = recognizedText });
+                try
+                {
+                    string recognizedText = RecognizeText(file);
+                    return Ok(new { Text = recognizedText });
+                }
+                catch (Exception ex)
+                {
+                    // Логирование ошибки
+                    Console.WriteLine($"Error processing file: {ex.Message}");
+                    return BadRequest($"Error processing file: {ex.Message}");
+                }
             }
-            return BadRequest();
+            return BadRequest("No file or empty file provided.");
         }
 
-        public string RecognizeText(IFormFile file)
+        [HttpGet("DownloadFile")]
+        [SwaggerOperation(Summary = "Download a file with extracted text.")]
+        public IActionResult DownloadFile(string text)
         {
-            string fileExtension = Path.GetExtension(file.FileName).ToLower();
+            var byteArray = Encoding.UTF8.GetBytes(text);
+            var fileStream = new MemoryStream(byteArray);
+
+            // Указать подходящий MIME тип для вашего файла (например, "text/plain" для текстовых файлов)
+            var contentType = "text/plain"; // Измените MIME тип в соответствии с типом файла, который вы возвращаете
+
+            // Вернуть файловый результат
+            return File(fileStream, contentType, "output.txt");
+        }
+
+        private string RecognizeText(IFormFile file)
+        {
+            string? fileExtension = Path.GetExtension(file.FileName)?.ToLower();
             string recognizedText = "";
 
             using (var engine = new TesseractEngine(@"C:\Users\Super PC\source\repos\Project_text\Project_text\tessdata", "rus+eng+spa+chi_sim+fra", EngineMode.Default))
@@ -33,20 +65,19 @@ namespace Project_text.Controllers
                 {
                     if (fileExtension == ".pdf")
                     {
-                        // Обработка PDF файлов
                         using (var memoryStream = new MemoryStream())
                         {
                             file.CopyTo(memoryStream);
+                            memoryStream.Position = 0;
 
-                            // Используйте using для объектов iTextSharp
                             using (var pdfReader = new PdfReader(memoryStream))
                             {
-                                using (var pdfDocument = new PdfDocument(pdfReader))
+                                using (var pdfDocument = new iText.Kernel.Pdf.PdfDocument(pdfReader))
                                 {
                                     for (int i = 1; i <= pdfDocument.GetNumberOfPages(); i++)
                                     {
                                         PdfPage pdfPage = pdfDocument.GetPage(i);
-                                        recognizedText += PdfTextExtractor.GetTextFromPage(pdfPage);
+                                        recognizedText += iText.Kernel.Pdf.Canvas.Parser.PdfTextExtractor.GetTextFromPage(pdfPage);
                                     }
                                 }
                             }
@@ -54,15 +85,10 @@ namespace Project_text.Controllers
                     }
                     else if (fileExtension == ".jpg" || fileExtension == ".png")
                     {
-                        // Обработка изображений (jpg, png)
                         using (var memoryStream = new MemoryStream())
                         {
                             file.CopyTo(memoryStream);
-
-                            // Сохранение изображения на диск перед загрузкой в память
                             System.IO.File.WriteAllBytes("image.tiff", memoryStream.ToArray());
-
-                            // Попытка загрузки изображения из файла
                             using (var img = Pix.LoadFromFile("image.tiff"))
                             {
                                 using (var page = engine.Process(img))
@@ -79,7 +105,6 @@ namespace Project_text.Controllers
                     }
                     else if (fileExtension == ".txt")
                     {
-                        // Обработка текстовых файлов
                         using (var reader = new StreamReader(file.OpenReadStream()))
                         {
                             recognizedText = reader.ReadToEnd();
@@ -87,11 +112,9 @@ namespace Project_text.Controllers
                     }
                     else if (fileExtension == ".xlsx")
                     {
-                        // Обработка файлов Excel (.xlsx)
                         using (var memoryStream = new MemoryStream())
                         {
                             file.CopyTo(memoryStream);
-
                             using (var package = new ExcelPackage(memoryStream))
                             {
                                 var worksheet = package.Workbook.Worksheets.FirstOrDefault();
@@ -112,13 +135,11 @@ namespace Project_text.Controllers
                             }
                         }
                     }
-                    
 
                     return recognizedText;
                 }
                 catch (Exception ex)
                 {
-                    // Логирование ошибки
                     Console.WriteLine($"Error processing file: {ex.Message}");
                     throw;
                 }
