@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Upload file</title>
+</head>
+
+<body>
+    <h1>Upload file:</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="file" id="fileInput" />
+        <button type="button" onclick="uploadFile()">Upload</button>
+    </form>
+    <div id="output"></div>
+
+    <script>
+        async function uploadFile() {
+            var fileInput = document.getElementById('fileInput');
+            var formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const response = await fetch('http://localhost:5105/OCR/UploadFile', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data);
+                } else {
+                    console.error('Server Error:', response.status);
+                }
+            } catch (error) {
+                console.error('Network Error:', error);
+            }
+        }
+    </script>
+</body>
+
+</html>

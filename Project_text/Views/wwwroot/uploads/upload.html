@@ -1,0 +1,33 @@
+@{
+    ViewData["Title"] = "Загрузка файла";
+}
+
+<h1>Загрузите файл:</h1>
+<form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="file" id="fileInput" />
+    <button type="submit">Загрузить</button>
+</form>
+<div id="output"></div>
+
+@section Scripts {
+<script>
+    document.getElementById("uploadForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        var formData = new FormData();
+        formData.append("file", document.getElementById("fileInput").files[0]);
+
+        fetch("/OCR/UploadFile", {
+            method: "POST",
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("output").innerText = data.Text;
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+    });
+</script>
+}
