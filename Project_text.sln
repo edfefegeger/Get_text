@@ -7,8 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Project_text", "Project_tex
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{E22CDAF9-4886-4225-9B14-69A1BDDC09E8}"
 	ProjectSection(SolutionItems) = preProject
+		CsvFileRecognitionService.cs = CsvFileRecognitionService.cs
+		DocxFileRecognitionService.cs = DocxFileRecognitionService.cs
 		ExcelFileRecognitionService.cs = ExcelFileRecognitionService.cs
 		ImageFileRecognitionService.cs = ImageFileRecognitionService.cs
+		ptxFileRecognitionService.cs = ptxFileRecognitionService.cs
 		TextFileRecognitionService.cs = TextFileRecognitionService.cs
 	EndProjectSection
 EndProject

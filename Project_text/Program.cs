@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -8,6 +9,9 @@ using System.Linq;
 using Tesseract;
 using iText.Kernel.Pdf;
 using OfficeOpenXml;
+using Aspose.Slides;
+using Microsoft.AspNetCore.Mvc;
+using Xceed.Words.NET;
 
 namespace Project_text
 {
@@ -48,11 +52,12 @@ namespace Project_text
             app.MapPost("/OCR/SetHtmlDirectory", (HttpContext context) =>
             {
                 var htmlDirectory = context.Request.Form["htmlDirectory"];
-              
+                // Добавьте обработку htmlDirectory (например, сохранение в переменной или конфигурации)
 
                 return Results.Ok();
             });
 
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             app.Run();
         }
 
@@ -61,35 +66,35 @@ namespace Project_text
             string? fileExtension = Path.GetExtension(file.FileName)?.ToLower();
             string recognizedText = "";
 
-            switch (fileExtension)
+            using (var memoryStream = new MemoryStream())
             {
-                case ".pdf":
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        file.CopyTo(memoryStream);
-                        memoryStream.Position = 0;
+                file.CopyTo(memoryStream);
+                memoryStream.Position = 0;
 
-                        using (var pdfReader = new PdfReader(memoryStream))
+                switch (fileExtension)
+                {
+                    case ".pdf":
+                        // Обработка PDF (требуется библиотека iText7)
+                        using (var pdfMemoryStream = new MemoryStream(memoryStream.ToArray()))
                         {
-                            using (var pdfDocument = new iText.Kernel.Pdf.PdfDocument(pdfReader))
+                            using (var pdfReader = new PdfReader(pdfMemoryStream))
                             {
-                                for (int i = 1; i <= pdfDocument.GetNumberOfPages(); i++)
+                                using (var pdfDocument = new iText.Kernel.Pdf.PdfDocument(pdfReader))
                                 {
-                                    PdfPage pdfPage = pdfDocument.GetPage(i);
-                                    recognizedText += iText.Kernel.Pdf.Canvas.Parser.PdfTextExtractor.GetTextFromPage(pdfPage);
+                                    for (int i = 1; i <= pdfDocument.GetNumberOfPages(); i++)
+                                    {
+                                        PdfPage pdfPage = pdfDocument.GetPage(i);
+                                        recognizedText += iText.Kernel.Pdf.Canvas.Parser.PdfTextExtractor.GetTextFromPage(pdfPage);
+                                    }
                                 }
                             }
                         }
-                    }
-                    break;
+                        break;
 
-                case ".jpg":
-                case ".png":
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        file.CopyTo(memoryStream);
-                        System.IO.File.WriteAllBytes("image.tiff", memoryStream.ToArray());
-                        using (var img = Pix.LoadFromFile("image.tiff"))
+                    case ".jpg":
+                    case ".png":
+                        // Обработка изображений (требуется библиотека Tesseract)
+                        using (var img = Pix.LoadFromMemory(memoryStream.ToArray()))
                         {
                             using (var engine = new TesseractEngine(@"C:\Users\Super PC\source\repos\Project_text\Project_text\tessdata", "rus+eng+spa+chi_sim+fra", EngineMode.Default))
                             {
@@ -104,44 +109,58 @@ namespace Project_text
                         {
                             recognizedText = "Recognition failed";
                         }
-                    }
-                    break;
+                        break;
 
-                case ".txt":
-                    using (var reader = new StreamReader(file.OpenReadStream()))
-                    {
-                        recognizedText = reader.ReadToEnd();
-                    }
-                    break;
-
-                case ".xlsx":
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        file.CopyTo(memoryStream);
-                        using (var package = new ExcelPackage(memoryStream))
+                    case ".txt":
+                        // Чтение текстовых файлов
+                        using (var reader = new StreamReader(memoryStream))
                         {
-                            var worksheet = package.Workbook.Worksheets.FirstOrDefault();
-                            if (worksheet != null)
-                            {
-                                int rowCount = worksheet.Dimension.Rows;
-                                int colCount = worksheet.Dimension.Columns;
+                            recognizedText = reader.ReadToEnd();
+                        }
+                        break;
 
-                                for (int row = 1; row <= rowCount; row++)
+                    case ".xls":
+                        break;
+                    case ".xlsx":
+                        recognizedText = new ExcelFileRecognitionService().RecognizeText(file);
+                        break;
+                        break;
+
+                    case ".docx":
+                        // Обработка файлов Word 
+                        recognizedText = new DocxFileRecognitionService().RecognizeText(file);
+                        break;
+
+                    case ".doc":
+                        // Обработка файлов Word 
+                        recognizedText = new DocxFileRecognitionService().RecognizeText(file);
+                        break;
+
+
+                    case ".pptx":
+                        
+                        using (var presentation = new Presentation(memoryStream))
+                        {
+                            foreach (ISlide slide in presentation.Slides)
+                            {
+                                var textFrames = slide.Shapes.OfType<IAutoShape>().Select(shape => shape.TextFrame);
+                                foreach (var textFrame in textFrames)
                                 {
-                                    for (int col = 1; col <= colCount; col++)
-                                    {
-                                        recognizedText += worksheet.Cells[row, col].Text + "\t";
-                                    }
-                                    recognizedText += Environment.NewLine;
+                                    recognizedText += textFrame.Text + Environment.NewLine;
                                 }
                             }
                         }
-                    }
-                    break;
+                        break;
 
-                default:
-                    recognizedText = "Unknown file type";
-                    break;
+                    case ".csv":
+                        recognizedText = CsvFileRecognitionService.RecognizeCsv(file);
+                        break;
+
+
+                    default:
+                        recognizedText = "Unknown file type";
+                        break;
+                }
             }
 
             return recognizedText;

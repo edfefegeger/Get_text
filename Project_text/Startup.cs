@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Project_text;
 
 namespace Project_text
 {
@@ -28,6 +29,9 @@ namespace Project_text
             services.AddScoped<IFileRecognitionService, ImageFileRecognitionService>();
             services.AddScoped<IFileRecognitionService, TextFileRecognitionService>();
             services.AddScoped<IFileRecognitionService, ExcelFileRecognitionService>();
+            services.AddScoped<IFileRecognitionService, DocxFileRecognitionService>();
+            services.AddScoped<IFileRecognitionService, PptxFileRecognitionService>();
+            services.AddScoped<IFileRecognitionService, CsvFileRecognitionService>();
             services.AddControllers();
 
             services.AddSwaggerGen(c =>

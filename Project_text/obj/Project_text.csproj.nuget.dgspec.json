@@ -40,6 +40,26 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Aspose.Slides": {
+              "target": "Package",
+              "version": "[5.9.0, )"
+            },
+            "Aspose.Slides.NET": {
+              "target": "Package",
+              "version": "[23.9.0, )"
+            },
+            "Aspose.Words": {
+              "target": "Package",
+              "version": "[23.9.0, )"
+            },
+            "CsvHelper": {
+              "target": "Package",
+              "version": "[30.0.1, )"
+            },
+            "DocX": {
+              "target": "Package",
+              "version": "[2.5.0, )"
+            },
             "EPPlus": {
               "target": "Package",
               "version": "[6.2.10, )"
@@ -51,6 +71,14 @@
             "Microsoft.AspNetCore.Cors": {
               "target": "Package",
               "version": "[2.2.0, )"
+            },
+            "Microsoft.Office.Interop.Word": {
+              "target": "Package",
+              "version": "[15.0.4797.1004, )"
+            },
+            "NPOI": {
+              "target": "Package",
+              "version": "[2.6.2, )"
             },
             "Nancy": {
               "target": "Package",
@@ -72,6 +100,10 @@
               "target": "Package",
               "version": "[3.0.2, )"
             },
+            "Spire.Doc": {
+              "target": "Package",
+              "version": "[11.9.19, )"
+            },
             "Spire.XLS": {
               "target": "Package",
               "version": "[13.9.1, )"
@@ -87,6 +119,10 @@
             "Tesseract": {
               "target": "Package",
               "version": "[5.2.0, )"
+            },
+            "Xceed.Words.NET": {
+              "target": "Package",
+              "version": "[2.5.23177.2123, )"
             },
             "itext7": {
               "target": "Package",

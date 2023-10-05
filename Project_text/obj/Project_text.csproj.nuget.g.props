@@ -20,5 +20,6 @@
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <PkgMicrosoft_Extensions_ApiDescription_Server Condition=" '$(PkgMicrosoft_Extensions_ApiDescription_Server)' == '' ">C:\Users\Super PC\.nuget\packages\microsoft.extensions.apidescription.server\6.0.5</PkgMicrosoft_Extensions_ApiDescription_Server>
     <PkgPdfiumViewer Condition=" '$(PkgPdfiumViewer)' == '' ">C:\Users\Super PC\.nuget\packages\pdfiumviewer\2.13.0</PkgPdfiumViewer>
+    <PkgDocX Condition=" '$(PkgDocX)' == '' ">C:\Users\Super PC\.nuget\packages\docx\2.5.0</PkgDocX>
   </PropertyGroup>
 </Project>
