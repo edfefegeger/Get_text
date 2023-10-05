@@ -8,7 +8,6 @@ using System.Linq;
 using Tesseract;
 using iText.Kernel.Pdf;
 using OfficeOpenXml;
-using iText.Kernel.Pdf.Canvas.Parser;
 
 namespace Project_text
 {
@@ -49,103 +48,103 @@ namespace Project_text
             app.MapPost("/OCR/SetHtmlDirectory", (HttpContext context) =>
             {
                 var htmlDirectory = context.Request.Form["htmlDirectory"];
-                // Добавьте обработку htmlDirectory (например, сохранение в переменной или конфигурации)
+              
 
                 return Results.Ok();
             });
 
             app.Run();
         }
+
         public static string RecognizeText(IFormFile file)
         {
             string? fileExtension = Path.GetExtension(file.FileName)?.ToLower();
             string recognizedText = "";
 
-            using (var engine = new TesseractEngine(@"C:\Users\Super PC\source\repos\Project_text\Project_text\tessdata", "rus+eng+spa+chi_sim+fra", EngineMode.Default))
+            switch (fileExtension)
             {
-                try
-                {
-                    if (fileExtension == ".pdf")
+                case ".pdf":
+                    using (var memoryStream = new MemoryStream())
                     {
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            file.CopyTo(memoryStream);
-                            memoryStream.Position = 0;
+                        file.CopyTo(memoryStream);
+                        memoryStream.Position = 0;
 
-                            using (var pdfReader = new PdfReader(memoryStream))
+                        using (var pdfReader = new PdfReader(memoryStream))
+                        {
+                            using (var pdfDocument = new iText.Kernel.Pdf.PdfDocument(pdfReader))
                             {
-                                using (var pdfDocument = new iText.Kernel.Pdf.PdfDocument(pdfReader))
+                                for (int i = 1; i <= pdfDocument.GetNumberOfPages(); i++)
                                 {
-                                    for (int i = 1; i <= pdfDocument.GetNumberOfPages(); i++)
-                                    {
-                                        PdfPage pdfPage = pdfDocument.GetPage(i);
-                                        recognizedText += iText.Kernel.Pdf.Canvas.Parser.PdfTextExtractor.GetTextFromPage(pdfPage);
-                                    }
+                                    PdfPage pdfPage = pdfDocument.GetPage(i);
+                                    recognizedText += iText.Kernel.Pdf.Canvas.Parser.PdfTextExtractor.GetTextFromPage(pdfPage);
                                 }
                             }
                         }
                     }
-                    else if (fileExtension == ".jpg" || fileExtension == ".png")
+                    break;
+
+                case ".jpg":
+                case ".png":
+                    using (var memoryStream = new MemoryStream())
                     {
-                        using (var memoryStream = new MemoryStream())
+                        file.CopyTo(memoryStream);
+                        System.IO.File.WriteAllBytes("image.tiff", memoryStream.ToArray());
+                        using (var img = Pix.LoadFromFile("image.tiff"))
                         {
-                            file.CopyTo(memoryStream);
-                            System.IO.File.WriteAllBytes("image.tiff", memoryStream.ToArray());
-                            using (var img = Pix.LoadFromFile("image.tiff"))
+                            using (var engine = new TesseractEngine(@"C:\Users\Super PC\source\repos\Project_text\Project_text\tessdata", "rus+eng+spa+chi_sim+fra", EngineMode.Default))
                             {
                                 using (var page = engine.Process(img))
                                 {
                                     recognizedText = page.GetText();
                                 }
                             }
+                        }
 
-                            if (string.IsNullOrWhiteSpace(recognizedText))
-                            {
-                                recognizedText = "Recognition failed";
-                            }
+                        if (string.IsNullOrWhiteSpace(recognizedText))
+                        {
+                            recognizedText = "Recognition failed";
                         }
                     }
-                    else if (fileExtension == ".txt")
+                    break;
+
+                case ".txt":
+                    using (var reader = new StreamReader(file.OpenReadStream()))
                     {
-                        using (var reader = new StreamReader(file.OpenReadStream()))
-                        {
-                            recognizedText = reader.ReadToEnd();
-                        }
+                        recognizedText = reader.ReadToEnd();
                     }
-                    else if (fileExtension == ".xlsx")
+                    break;
+
+                case ".xlsx":
+                    using (var memoryStream = new MemoryStream())
                     {
-                        using (var memoryStream = new MemoryStream())
+                        file.CopyTo(memoryStream);
+                        using (var package = new ExcelPackage(memoryStream))
                         {
-                            file.CopyTo(memoryStream);
-                            using (var package = new ExcelPackage(memoryStream))
+                            var worksheet = package.Workbook.Worksheets.FirstOrDefault();
+                            if (worksheet != null)
                             {
-                                var worksheet = package.Workbook.Worksheets.FirstOrDefault();
-                                if (worksheet != null)
+                                int rowCount = worksheet.Dimension.Rows;
+                                int colCount = worksheet.Dimension.Columns;
+
+                                for (int row = 1; row <= rowCount; row++)
                                 {
-                                    int rowCount = worksheet.Dimension.Rows;
-                                    int colCount = worksheet.Dimension.Columns;
-
-                                    for (int row = 1; row <= rowCount; row++)
+                                    for (int col = 1; col <= colCount; col++)
                                     {
-                                        for (int col = 1; col <= colCount; col++)
-                                        {
-                                            recognizedText += worksheet.Cells[row, col].Text + "\t";
-                                        }
-                                        recognizedText += Environment.NewLine;
+                                        recognizedText += worksheet.Cells[row, col].Text + "\t";
                                     }
+                                    recognizedText += Environment.NewLine;
                                 }
                             }
                         }
                     }
+                    break;
 
-                    return recognizedText;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error processing file: {ex.Message}");
-                    throw;
-                }
+                default:
+                    recognizedText = "Unknown file type";
+                    break;
             }
+
+            return recognizedText;
         }
     }
 }

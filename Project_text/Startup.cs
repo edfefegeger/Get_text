@@ -2,6 +2,11 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Project_text
 {
@@ -19,7 +24,10 @@ namespace Project_text
                                .AllowAnyHeader();
                     });
             });
-
+            services.AddScoped<IFileRecognitionService, PdfFileRecognitionService>();
+            services.AddScoped<IFileRecognitionService, ImageFileRecognitionService>();
+            services.AddScoped<IFileRecognitionService, TextFileRecognitionService>();
+            services.AddScoped<IFileRecognitionService, ExcelFileRecognitionService>();
             services.AddControllers();
 
             services.AddSwaggerGen(c =>
