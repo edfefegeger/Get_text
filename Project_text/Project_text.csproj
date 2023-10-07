@@ -19,9 +19,11 @@
 		<PackageReference Include="EPPlus" Version="6.2.10" />
 		<PackageReference Include="itext7" Version="8.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
+		<PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.32.1" />
 		<PackageReference Include="Microsoft.Office.Interop.Word" Version="15.0.4797.1004" />
 		<PackageReference Include="Nancy" Version="2.0.0" />
 		<PackageReference Include="Nancy.Hosting.Self" Version="2.0.0" />
+		<PackageReference Include="NAudio" Version="2.2.1" />
 		<PackageReference Include="NPOI" Version="2.6.2" />
 		<PackageReference Include="PdfiumViewer" Version="2.13.0" />
 		<PackageReference Include="PdfSharp" Version="1.50.5147" />
@@ -30,6 +32,7 @@
 		<PackageReference Include="Spire.XLS" Version="13.9.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
+		<PackageReference Include="System.Speech" Version="7.0.0" />
 		<PackageReference Include="Tesseract" Version="5.2.0" />
 		<PackageReference Include="Xceed.Words.NET" Version="2.5.23177.2123" />
 	</ItemGroup>

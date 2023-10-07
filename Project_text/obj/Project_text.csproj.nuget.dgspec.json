@@ -72,9 +72,17 @@
               "target": "Package",
               "version": "[2.2.0, )"
             },
+            "Microsoft.CognitiveServices.Speech": {
+              "target": "Package",
+              "version": "[1.32.1, )"
+            },
             "Microsoft.Office.Interop.Word": {
               "target": "Package",
               "version": "[15.0.4797.1004, )"
+            },
+            "NAudio": {
+              "target": "Package",
+              "version": "[2.2.1, )"
             },
             "NPOI": {
               "target": "Package",
@@ -115,6 +123,10 @@
             "Swashbuckle.AspNetCore.Annotations": {
               "target": "Package",
               "version": "[6.5.0, )"
+            },
+            "System.Speech": {
+              "target": "Package",
+              "version": "[7.0.0, )"
             },
             "Tesseract": {
               "target": "Package",

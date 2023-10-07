@@ -12,14 +12,21 @@
         <input type="file" name="file" id="fileInput" />
         <button type="button" onclick="uploadFile()">Upload</button>
     </form>
+    <h2>Record and Upload Audio:</h2>
+    <button onclick="startRecording()">Start Recording</button>
+    <button onclick="stopRecording()">Stop Recording</button>
+    <button onclick="playRecording()">Play Recording</button>
+    <audio controls id="audioPlayer"></audio>
     <div id="output"></div>
 
     <script>
+        let mediaRecorder;
+        let audioChunks = [];
+
         async function uploadFile() {
             var fileInput = document.getElementById('fileInput');
             var formData = new FormData();
             formData.append('file', fileInput.files[0]);
-
 
             try {
                 const response = await fetch('http://localhost:5105/OCR/UploadFile', {
@@ -37,6 +44,62 @@
                 console.error('Network Error:', error);
             }
         }
+
+        async function startRecording() {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+
+            mediaRecorder.ondataavailable = event => {
+                audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const audioPlayer = document.getElementById('audioPlayer');
+                audioPlayer.src = audioUrl;
+                audioPlayer.controls = true;
+
+                const formData = new FormData();
+                formData.append('file', audioBlob, 'audio.wav');
+
+                // Отправка аудиофайла на сервер
+                uploadAudio(formData);
+            };
+
+            mediaRecorder.start();
+        }
+
+        function stopRecording() {
+            mediaRecorder.stop();
+        }
+
+        function playRecording() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.play();
+        }
+
+        async function uploadAudio(formData) {
+            try {
+                const response = await fetch('http://localhost:5105/OCR/UploadFile', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data);
+                } else {
+                    console.error('Server Error:', response.status);
+                }
+            } catch (error) {
+                console.error('Network Error:', error);
+
+
+            }
+        }
+                
+       
     </script>
 </body>
 

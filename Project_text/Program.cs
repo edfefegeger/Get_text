@@ -1,17 +1,16 @@
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
-using System.Linq;
 using Tesseract;
 using iText.Kernel.Pdf;
 using OfficeOpenXml;
 using Aspose.Slides;
 using Microsoft.AspNetCore.Mvc;
 using Xceed.Words.NET;
+using System.Speech.Recognition;
 
 namespace Project_text
 {
@@ -60,11 +59,52 @@ namespace Project_text
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             app.Run();
         }
+        static string RecognizeAudioFromWav(string filePath, string language)
+        {
+            using (var recognizer = new SpeechRecognitionEngine(new System.Globalization.CultureInfo(language)))
+            {
+                var result = "";
+                var autoResetEvent = new System.Threading.AutoResetEvent(false);
 
+                recognizer.LoadGrammar(new DictationGrammar());
+                recognizer.SpeechRecognized += (sender, e) =>
+                {
+                    if (e.Result != null && e.Result.Text != null)
+                    {
+                        result += e.Result.Text + " ";
+                    }
+                };
+
+                recognizer.SpeechRecognitionRejected += (sender, e) =>
+                {
+                    if (e.Result != null && e.Result.Text != null)
+                    {
+                        result += $"Recognition rejected: {e.Result.Text} ";
+                    }
+                };
+
+                recognizer.RecognizeCompleted += (sender, e) =>
+                {
+                    if (e.Error != null)
+                    {
+                        result = e.Error.Message;
+                    }
+
+                    autoResetEvent.Set();
+                };
+
+                recognizer.SetInputToWaveFile(filePath);
+                recognizer.RecognizeAsync(RecognizeMode.Multiple);
+
+                autoResetEvent.WaitOne();
+                return result;
+
+            }
+        }
         public static string RecognizeText(IFormFile file)
         {
             string? fileExtension = Path.GetExtension(file.FileName)?.ToLower();
-            string recognizedText = "";
+            string recognizedText = ""; // Инициализация переменной значением по умолчанию
 
             using (var memoryStream = new MemoryStream())
             {
@@ -124,21 +164,14 @@ namespace Project_text
                     case ".xlsx":
                         recognizedText = new ExcelFileRecognitionService().RecognizeText(file);
                         break;
-                        break;
 
                     case ".docx":
-                        // Обработка файлов Word 
-                        recognizedText = new DocxFileRecognitionService().RecognizeText(file);
-                        break;
-
                     case ".doc":
                         // Обработка файлов Word 
                         recognizedText = new DocxFileRecognitionService().RecognizeText(file);
                         break;
 
-
                     case ".pptx":
-                        
                         using (var presentation = new Presentation(memoryStream))
                         {
                             foreach (ISlide slide in presentation.Slides)
@@ -156,14 +189,22 @@ namespace Project_text
                         recognizedText = CsvFileRecognitionService.RecognizeCsv(file);
                         break;
 
+                    case ".wav":
+                        var tempFilePath = Path.GetTempFileName();
+                        File.WriteAllBytes(tempFilePath, memoryStream.ToArray());
+                        recognizedText = RecognizeAudioFromWav(tempFilePath, "en-US"); // Укажите нужный языковой код
+                        File.Delete(tempFilePath); // Удаляем временный файл
+                        break;
 
                     default:
-                        recognizedText = "Unknown file type";
+                        recognizedText = "Unknown file format";
                         break;
                 }
             }
 
             return recognizedText;
         }
+
+        
     }
 }

@@ -32,6 +32,8 @@ namespace Project_text
             services.AddScoped<IFileRecognitionService, DocxFileRecognitionService>();
             services.AddScoped<IFileRecognitionService, PptxFileRecognitionService>();
             services.AddScoped<IFileRecognitionService, CsvFileRecognitionService>();
+            services.AddScoped<IFileRecognitionService, MicrophoneRecognitionService>();
+            services.AddScoped<IFileRecognitionService, FileSpeechRecognitionService>();
             services.AddControllers();
 
             services.AddSwaggerGen(c =>
