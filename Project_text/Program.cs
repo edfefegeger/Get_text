@@ -59,50 +59,61 @@ namespace Project_text
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             app.Run();
         }
-        static string RecognizeAudioFromWav(string filePath, string language)
+        static string RecognizeAudioFromWav(string filePath, params string[] languages)
         {
-            using (var recognizer = new SpeechRecognitionEngine(new System.Globalization.CultureInfo(language)))
+            try
             {
                 var result = "";
                 var autoResetEvent = new System.Threading.AutoResetEvent(false);
 
-                recognizer.LoadGrammar(new DictationGrammar());
-                recognizer.SpeechRecognized += (sender, e) =>
+                using (var recognizer = new SpeechRecognitionEngine(new System.Globalization.CultureInfo(languages[0])))
                 {
-                    if (e.Result != null && e.Result.Text != null)
+                    recognizer.LoadGrammar(new DictationGrammar());
+                    recognizer.SpeechRecognized += (sender, e) =>
                     {
-                        result += e.Result.Text + " ";
-                    }
-                };
+                        if (e.Result != null && e.Result.Text != null)
+                        {
+                            result += e.Result.Text + " ";
+                        }
+                    };
 
-                recognizer.SpeechRecognitionRejected += (sender, e) =>
-                {
-                    if (e.Result != null && e.Result.Text != null)
+                    recognizer.SpeechRecognitionRejected += (sender, e) =>
                     {
-                        result += $"Recognition rejected: {e.Result.Text} ";
-                    }
-                };
+                        if (e.Result != null && e.Result.Text != null)
+                        {
+                            result += $"Recognition rejected: {e.Result.Text} ";
+                        }
+                    };
 
-                recognizer.RecognizeCompleted += (sender, e) =>
-                {
-                    if (e.Error != null)
+                    recognizer.RecognizeCompleted += (sender, e) =>
                     {
-                        result = e.Error.Message;
-                    }
+                        if (e.Error != null)
+                        {
+                            result = e.Error.Message;
+                        }
 
-                    autoResetEvent.Set();
-                };
+                        autoResetEvent.Set();
+                    };
 
-                recognizer.SetInputToWaveFile(filePath);
-                recognizer.RecognizeAsync(RecognizeMode.Multiple);
+                    recognizer.SetInputToWaveFile(filePath);
+                    recognizer.RecognizeAsync(RecognizeMode.Multiple);
 
-                autoResetEvent.WaitOne();
-                return result;
-
+                    autoResetEvent.WaitOne();
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error recognizing audio: {ex.Message}");
+                return $"Error recognizing audio: {ex.Message}";
             }
         }
+
+
         public static string RecognizeText(IFormFile file)
         {
+            
+
             string? fileExtension = Path.GetExtension(file.FileName)?.ToLower();
             string recognizedText = ""; // Инициализация переменной значением по умолчанию
 
@@ -190,10 +201,12 @@ namespace Project_text
                         break;
 
                     case ".wav":
+                    
                         var tempFilePath = Path.GetTempFileName();
                         File.WriteAllBytes(tempFilePath, memoryStream.ToArray());
-                        recognizedText = RecognizeAudioFromWav(tempFilePath, "en-US"); // Укажите нужный языковой код
-                        File.Delete(tempFilePath); // Удаляем временный файл
+                        recognizedText = RecognizeAudioFromWav(tempFilePath, "en-US", "fr-FR", "es-ES", "ru-RU");
+
+
                         break;
 
                     default:

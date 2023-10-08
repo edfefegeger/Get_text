@@ -45,6 +45,7 @@
             }
         }
 
+
         async function startRecording() {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             mediaRecorder = new MediaRecorder(stream);
@@ -63,6 +64,7 @@
                 const formData = new FormData();
                 formData.append('file', audioBlob, 'audio.wav');
 
+
                 // Отправка аудиофайла на сервер
                 uploadAudio(formData);
             };
@@ -70,9 +72,33 @@
             mediaRecorder.start();
         }
 
-        function stopRecording() {
+        async function stopRecording() {
             mediaRecorder.stop();
+
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            const formData = new FormData();
+            formData.append('file', audioBlob, 'audio.wav');
+
+            try {
+                const response = await fetch('http://localhost:5105/OCR/UploadFile', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data);
+                } else {
+                    console.error('Server Error:', response.status);
+                }
+            } catch (error) {
+                console.error('Network Error:', error);
+            }
+
+            // Сброс массива для следующей записи
+            audioChunks = [];
         }
+
 
         function playRecording() {
             const audioPlayer = document.getElementById('audioPlayer');
@@ -94,10 +120,9 @@
                 }
             } catch (error) {
                 console.error('Network Error:', error);
-
-
             }
         }
+
                 
        
     </script>

@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
-
+using System.Speech.Recognition;
+using System.Speech.Synthesis;
 [ApiController]
 [Route("OCR")]
 public class OCRController : ControllerBase
@@ -22,6 +23,12 @@ public class OCRController : ControllerBase
         {
             try
             {
+                // Убедитесь, что тип файла правильный
+                if (file.ContentType != "audio/wav")
+                {
+                    return BadRequest("Invalid file format. Please upload a valid WAV audio file.");
+                }
+
                 string recognizedText = _fileRecognitionService.RecognizeText(file);
                 return Ok(new { Text = recognizedText });
             }

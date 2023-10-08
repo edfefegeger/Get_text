@@ -1382,6 +1382,19 @@
           }
         }
       },
+      "NReco.VideoConverter/1.2.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/NReco.VideoConverter.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/NReco.VideoConverter.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "PdfiumViewer/2.13.0": {
         "type": "package",
         "compile": {
@@ -5349,6 +5362,21 @@
         "logo/60_60.jpg",
         "npoi.2.6.2.nupkg.sha512",
         "npoi.nuspec"
+      ]
+    },
+    "NReco.VideoConverter/1.2.1": {
+      "sha512": "d/V78hRW6Iqi9+lNrivCWL9qMiiJ8WCrwN1wpEvGq+3mE3uIy7VYhkgHrJBkUzx4RRQKEJ9UvCvVb+0ELIbGWg==",
+      "type": "package",
+      "path": "nreco.videoconverter/1.2.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/NReco.VideoConverter.dll",
+        "lib/net45/NReco.VideoConverter.xml",
+        "lib/netstandard2.0/NReco.VideoConverter.dll",
+        "lib/netstandard2.0/NReco.VideoConverter.xml",
+        "nreco.videoconverter.1.2.1.nupkg.sha512",
+        "nreco.videoconverter.nuspec"
       ]
     },
     "PdfiumViewer/2.13.0": {
@@ -10423,6 +10451,7 @@
       "Microsoft.Office.Interop.Word >= 15.0.4797.1004",
       "NAudio >= 2.2.1",
       "NPOI >= 2.6.2",
+      "NReco.VideoConverter >= 1.2.1",
       "Nancy >= 2.0.0",
       "Nancy.Hosting.Self >= 2.0.0",
       "PdfSharp >= 1.50.5147",
@@ -10525,6 +10554,10 @@
             "target": "Package",
             "version": "[2.6.2, )"
           },
+          "NReco.VideoConverter": {
+            "target": "Package",
+            "version": "[1.2.1, )"
+          },
           "Nancy": {
             "target": "Package",
             "version": "[2.0.0, )"
@@ -10589,6 +10622,24 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[6.0.22, 6.0.22]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[6.0.22, 6.0.22]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[6.0.22, 6.0.22]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Ref",
+            "version": "[6.0.22, 6.0.22]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -10597,7 +10648,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
       }
     }
   },

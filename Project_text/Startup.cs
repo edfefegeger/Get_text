@@ -36,6 +36,8 @@ namespace Project_text
             services.AddScoped<IFileRecognitionService, FileSpeechRecognitionService>();
             services.AddControllers();
 
+
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API Name", Version = "v1" });

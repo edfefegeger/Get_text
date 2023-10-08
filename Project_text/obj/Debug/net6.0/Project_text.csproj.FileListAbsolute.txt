@@ -287,3 +287,4 @@ C:\Users\Super PC\source\repos\Project_text\Project_text\bin\Debug\net6.0\runtim
 C:\Users\Super PC\source\repos\Project_text\Project_text\bin\Debug\net6.0\runtimes\win10-arm64\native\Microsoft.CognitiveServices.Speech.extension.kws.ort.dll
 C:\Users\Super PC\source\repos\Project_text\Project_text\bin\Debug\net6.0\runtimes\win10-arm64\native\Microsoft.CognitiveServices.Speech.extension.lu.dll
 C:\Users\Super PC\source\repos\Project_text\Project_text\bin\Debug\net6.0\runtimes\win10-arm64\native\Microsoft.CognitiveServices.Speech.extension.mas.dll
+C:\Users\Super PC\source\repos\Project_text\Project_text\bin\Debug\net6.0\NReco.VideoConverter.dll

@@ -20,6 +20,7 @@
           "Microsoft.Office.Interop.Word": "15.0.4797.1004",
           "NAudio": "2.2.1",
           "NPOI": "2.6.2",
+          "NReco.VideoConverter": "1.2.1",
           "Nancy": "2.0.0",
           "Nancy.Hosting.Self": "2.0.0",
           "PDFsharp": "1.50.5147",
@@ -1065,6 +1066,14 @@
           "lib/net6.0/NPOI.OpenXmlFormats.dll": {
             "assemblyVersion": "2.6.2.0",
             "fileVersion": "2.6.2.0"
+          }
+        }
+      },
+      "NReco.VideoConverter/1.2.1": {
+        "runtime": {
+          "lib/netstandard2.0/NReco.VideoConverter.dll": {
+            "assemblyVersion": "1.2.1.0",
+            "fileVersion": "1.2.1.0"
           }
         }
       },
@@ -2668,6 +2677,13 @@
       "sha512": "sha512-s5lxJQ1Xy2nr3yDvoMH6og2cb2I8reIrUROf2afjKucS+pWNZG07kwITo+CCS3KaXNiPjUn1YaS1PUf8fT9cHg==",
       "path": "npoi/2.6.2",
       "hashPath": "npoi.2.6.2.nupkg.sha512"
+    },
+    "NReco.VideoConverter/1.2.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-d/V78hRW6Iqi9+lNrivCWL9qMiiJ8WCrwN1wpEvGq+3mE3uIy7VYhkgHrJBkUzx4RRQKEJ9UvCvVb+0ELIbGWg==",
+      "path": "nreco.videoconverter/1.2.1",
+      "hashPath": "nreco.videoconverter.1.2.1.nupkg.sha512"
     },
     "PdfiumViewer/2.13.0": {
       "type": "package",
