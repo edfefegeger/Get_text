@@ -1,5 +1,0 @@
-C:\Users\Super PC\source\repos\Project_text\Project_text\obj\Debug\net7.0\Project_text.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\Super PC\source\repos\Project_text\Project_text\obj\Debug\net7.0\Project_text.AssemblyInfoInputs.cache
-C:\Users\Super PC\source\repos\Project_text\Project_text\obj\Debug\net7.0\Project_text.AssemblyInfo.cs
-C:\Users\Super PC\source\repos\Project_text\Project_text\obj\Debug\net7.0\Project_text.csproj.CoreCompileInputs.cache
-C:\Users\Super PC\source\repos\Project_text\Project_text\obj\Debug\net7.0\Project_text.MvcApplicationPartsAssemblyInfo.cache
